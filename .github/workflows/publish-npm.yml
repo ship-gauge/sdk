@@ -1,0 +1,48 @@
+name: Publish npm packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version bump (patch | minor | major)"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @shipgauge/scorers --filter @shipgauge/node --filter @shipgauge/cli build
+
+      - name: Bump versions
+        run: |
+          pnpm --filter @shipgauge/scorers version ${{ inputs.version }}
+          pnpm --filter @shipgauge/node version ${{ inputs.version }}
+          pnpm --filter @shipgauge/cli version ${{ inputs.version }}
+
+      - name: Publish to npm
+        run: |
+          pnpm --filter @shipgauge/scorers publish --no-git-checks --access public
+          pnpm --filter @shipgauge/node publish --no-git-checks --access public
+          pnpm --filter @shipgauge/cli publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

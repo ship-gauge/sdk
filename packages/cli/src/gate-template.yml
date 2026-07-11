@@ -1,0 +1,10 @@
+# Gate thresholds — compared against baseline on each PR
+suite: smoke
+rules:
+  pass_rate:
+    min: 0.95
+    max_drop: 0.05
+  avg_cost_usd:
+    max_increase: 0.20
+  fail_on_any_case: true
+bypass_label: shipgauge-skip

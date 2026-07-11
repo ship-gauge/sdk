@@ -1,0 +1,21 @@
+{
+  "name": "shipgauge-sdk",
+  "private": true,
+  "scripts": {
+    "build": "turbo build --filter='./packages/*'",
+    "typecheck": "turbo typecheck",
+    "lint": "turbo lint",
+    "test": "vitest run",
+    "eval:smoke": "node packages/cli/dist/index.js eval --suite smoke --no-upload",
+    "gate:check": "node packages/cli/dist/index.js gate check --suite smoke --no-upload"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.26.1",
+  "engines": {
+    "node": ">=20"
+  }
+}

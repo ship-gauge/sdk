@@ -1,0 +1,73 @@
+name: smoke
+version: 1
+defaults:
+  model: gpt-4o-mini
+  feature_id: chat
+  timeout_ms: 30000
+
+cases:
+  - id: greeting_en
+    invoke:
+      type: mock
+      output: "Hello! I'm here to help you with any questions."
+      latency_ms: 120
+      cost_usd: 0.0001
+    scorers:
+      - type: contains
+        value: help
+        case_insensitive: true
+      - type: regex
+        pattern: "assist|help"
+        flags: i
+      - type: latency_max_ms
+        max: 5000
+      - type: cost_max_usd
+        max: 0.01
+
+  - id: greeting_es
+    vars:
+      locale: es
+    invoke:
+      type: mock
+      output: "¡Hola! Estoy aquí para ayudarte con cualquier pregunta."
+      latency_ms: 95
+      cost_usd: 0.0001
+    scorers:
+      - type: contains
+        value: ayud
+        case_insensitive: true
+      - type: cost_max_usd
+        max: 0.01
+
+  - id: json_extract
+    feature_id: extract
+    invoke:
+      type: mock
+      output: '{"amount": 42.5, "currency": "USD"}'
+      latency_ms: 80
+      cost_usd: 0.0002
+    scorers:
+      - type: json_schema
+        schema:
+          type: object
+          required: [amount, currency]
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+      - type: latency_max_ms
+        max: 3000
+
+  - id: no_forbidden
+    invoke:
+      type: mock
+      output: "Here is a helpful summary of your document."
+      latency_ms: 50
+      cost_usd: 0.00005
+    scorers:
+      - type: not_contains
+        value: error
+        case_insensitive: true
+      - type: contains
+        value: summary

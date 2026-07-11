@@ -1,0 +1,4 @@
+api_key: sg_ingest_your_key_here
+project_id: your-project-uuid
+base_url: http://localhost:3000
+suites_dir: ../suites

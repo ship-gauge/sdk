@@ -1,0 +1,36 @@
+{
+  "name": "@shipgauge/cli",
+  "version": "0.1.0",
+  "description": "ShipGauge CLI — eval suites, CI gates, and budget status",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harper-dev/ship-gauge.git",
+    "directory": "packages/cli"
+  },
+  "keywords": ["shipgauge", "eval", "llm", "ci", "gate"],
+  "type": "module",
+  "bin": {
+    "shipgauge": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'no lint configured'",
+    "prepublishOnly": "pnpm build"
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "@shipgauge/scorers": "workspace:*",
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "suite": "smoke",
+  "pass_rate": 1,
+  "avg_cost_usd": 0.000113,
+  "p95_latency_ms": 120,
+  "total_cases": 4,
+  "passed_cases": 4,
+  "cases": [
+    {
+      "case_id": "greeting_en",
+      "passed": true,
+      "cost_usd": 0.0001,
+      "latency_ms": 120,
+      "scorer_results": []
+    },
+    {
+      "case_id": "greeting_es",
+      "passed": true,
+      "cost_usd": 0.0001,
+      "latency_ms": 95,
+      "scorer_results": []
+    },
+    {
+      "case_id": "json_extract",
+      "passed": true,
+      "cost_usd": 0.0002,
+      "latency_ms": 80,
+      "scorer_results": []
+    },
+    {
+      "case_id": "no_forbidden",
+      "passed": true,
+      "cost_usd": 0.00005,
+      "latency_ms": 50,
+      "scorer_results": []
+    }
+  ]
+}
