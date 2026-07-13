@@ -13,7 +13,7 @@ on:
           - minor
           - major
 
-# Trusted Publisher (OIDC): no NPM_TOKEN secret — configure each package on npmjs.com
+# Trusted Publisher (OIDC): configure each package on npmjs.com
 # Settings → Trusted Publisher → GitHub Actions → ship-gauge / sdk / publish-npm.yml
 permissions:
   contents: read
@@ -27,7 +27,6 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
-      # npm ≥ 11.5.1 required for OIDC trusted publishing (bundled with Node 24)
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -37,15 +36,29 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @shipgauge/scorers --filter @shipgauge/node --filter @shipgauge/cli build
 
+      # pnpm "version" runs a package script — use npm version via exec instead
       - name: Bump versions
         run: |
-          pnpm --filter @shipgauge/scorers version ${{ inputs.version }}
-          pnpm --filter @shipgauge/node version ${{ inputs.version }}
-          pnpm --filter @shipgauge/cli version ${{ inputs.version }}
+          for pkg in @shipgauge/scorers @shipgauge/node @shipgauge/cli; do
+            pnpm --filter "$pkg" exec npm version ${{ inputs.version }} --no-git-tag-version
+          done
+          echo "Versions after bump:"
+          node -e "
+            const fs=require('fs');
+            for (const p of ['scorers','node','cli']) {
+              const j=JSON.parse(fs.readFileSync('packages/'+p+'/package.json','utf8'));
+              console.log(j.name, j.version);
+            }
+          "
 
-      # Do NOT set NODE_AUTH_TOKEN — setup-node uses OIDC when Trusted Publisher is configured
       - name: Publish to npm
         run: |
           pnpm --filter @shipgauge/scorers publish --no-git-checks --access public
           pnpm --filter @shipgauge/node publish --no-git-checks --access public
           pnpm --filter @shipgauge/cli publish --no-git-checks --access public
+
+      - name: Verify on registry
+        run: |
+          npm view @shipgauge/scorers version
+          npm view @shipgauge/node version
+          npm view @shipgauge/cli version
