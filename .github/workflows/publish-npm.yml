@@ -13,20 +13,24 @@ on:
           - minor
           - major
 
+# Trusted Publisher (OIDC): no NPM_TOKEN secret — configure each package on npmjs.com
+# Settings → Trusted Publisher → GitHub Actions → ship-gauge / sdk / publish-npm.yml
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
 
+      # npm ≥ 11.5.1 required for OIDC trusted publishing (bundled with Node 24)
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
@@ -39,10 +43,9 @@ jobs:
           pnpm --filter @shipgauge/node version ${{ inputs.version }}
           pnpm --filter @shipgauge/cli version ${{ inputs.version }}
 
+      # Do NOT set NODE_AUTH_TOKEN — setup-node uses OIDC when Trusted Publisher is configured
       - name: Publish to npm
         run: |
           pnpm --filter @shipgauge/scorers publish --no-git-checks --access public
           pnpm --filter @shipgauge/node publish --no-git-checks --access public
           pnpm --filter @shipgauge/cli publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harper-dev/ship-gauge.git",
+    "url": "git+https://github.com/ship-gauge/sdk.git",
     "directory": "packages/scorers"
   },
   "keywords": ["shipgauge", "eval", "llm", "scorers"],
@@ -27,7 +27,7 @@
     "lint": "echo 'no lint configured'",
     "prepublishOnly": "pnpm build"
   },
-  "files": ["dist"],
+  "files": ["dist", "README.md"],
   "devDependencies": {
     "typescript": "^5.8.3"
   }
